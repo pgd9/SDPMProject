@@ -99,8 +99,8 @@ public class Controller : MonoBehaviour
         rb.isKinematic = false;
         rb.useGravity = true;
         Vector3 dir = Quaternion.AngleAxis(diveAngle, Vector3.forward) * Vector3.right;
-        //rb.AddForce(dir * 250, ForceMode.Force);
-        rb.velocity = new Vector3(5f, 5f, 0);
+        rb.AddForce(dir * 250, ForceMode.Force);
+        //rb.velocity = new Vector3(5f, 5f, 0);
         rb.AddTorque(new Vector3(0, 0, 1) * -100);
     }
 
