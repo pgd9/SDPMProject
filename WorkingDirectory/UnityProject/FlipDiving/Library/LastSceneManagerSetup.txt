@@ -1,4 +1,1 @@
-sceneSetups:
-- path: Assets/JumpScene.unity
-  isLoaded: 1
-  isActive: 1
+sceneSetups: []
