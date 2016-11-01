@@ -50,7 +50,7 @@ public class Controller : MonoBehaviour
             // Get an angle - set diveAngle = getAngle from animation
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha2)) && State == Constants.State_Ready) //|| Input.touchCount == 0
+        else if ((Input.GetKeyUp(KeyCode.Alpha2) || Input.touchCount == 0) && State == Constants.State_Ready) //
         { // Input.GetKeyUp(KeyCode.Space) && count == 0
 
             //angleDisplayObject.SetActive(false);
@@ -64,7 +64,7 @@ public class Controller : MonoBehaviour
             tuck();
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha4)) && State == Constants.State_Tuck) // || Input.touchCount == 0
+        else if ((Input.GetKeyUp(KeyCode.Alpha4) || Input.touchCount == 0) && State == Constants.State_Tuck) // 
         {
             State = Constants.State_End;
             //End of Jump;
