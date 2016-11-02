@@ -123,6 +123,7 @@ public class Controller : MonoBehaviour
                 // Code on valid landing
                 print("Valid Jump");
                 transform.position = getNewposition();
+                JumpMsg.text = "Awesome!";
             }
             else
             {
@@ -163,6 +164,7 @@ public class Controller : MonoBehaviour
         }
         else if (!(State.Equals(Constants.State_Idle)))
         {
+        currentElevation = 1;
             validLanding = false;
             JumpMsg.text = "Got hit";
             lastposition = originalposition;
@@ -174,7 +176,6 @@ public class Controller : MonoBehaviour
     private void setDefaultPosition(Collision other)
     {
         State = Constants.State_Idle;
-        currentElevation = 1;
         ani.SetBool("Crouch", false);
         transform.rotation = originalrotation;
         rb.useGravity = false;
