@@ -9,7 +9,7 @@ public class Controller : MonoBehaviour
     private Rigidbody rb;
     private Cubemap c;
     private Animator ani;
-    private int count = 0;
+    private int count = 0; 
     private bool hasTuck;
     private bool validLanding;
 
@@ -21,6 +21,8 @@ public class Controller : MonoBehaviour
     private Quaternion originalrotation;
     private Vector3 originalposition;
     private Vector3 lastposition;
+    private int score;
+    public Text countText;
 
     void Awake()
     {
@@ -40,6 +42,8 @@ public class Controller : MonoBehaviour
         ani = GetComponent<Animator>();
         ani.applyRootMotion = false;
         angleDisplayObject.SetActive(false);
+        score = 0;
+        SetCountText();
     }
 
     // Update is called once per frame
@@ -185,13 +189,24 @@ public class Controller : MonoBehaviour
         rb.AddTorque(new Vector3(0, 0, 1) * -100);
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Coin"))
+        {
+            other.gameObject.SetActive(false);
+            score = score + 1;
+            SetCountText();
+        }
+    }
 
-
-
+    void SetCountText()
+    {
+        countText.text = "Score: " + score.ToString();
+    }
     // Position to jump
     public Vector3 getHumanPosition()
     {
         return Vector3.zero;
         //return rb.position;
-    }
+    }   
 }
