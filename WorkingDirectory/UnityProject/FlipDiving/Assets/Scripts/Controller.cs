@@ -18,13 +18,17 @@ public class Controller : MonoBehaviour
     public GameObject angleDisplayObject;
     public GameObject coin;
     public Text JumpMsg;
-    private Quaternion originalposition;
+    private Quaternion originalrotation;
+    private Vector3 originalposition;
+    private Vector3 lastposition;
 
     void Awake()
     {
         ani = GetComponent<Animator>();
         ani.applyRootMotion = false;
-        originalposition = transform.rotation;
+        originalrotation = transform.rotation;
+        originalposition = transform.position;
+        lastposition = originalposition;
     }
 
     // Use this for initialization
@@ -35,7 +39,7 @@ public class Controller : MonoBehaviour
         rb.useGravity = false;
         ani = GetComponent<Animator>();
         ani.applyRootMotion = false;
-        //angleDisplayObject.SetActive(false);
+        angleDisplayObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -45,16 +49,17 @@ public class Controller : MonoBehaviour
         if ((Input.GetKeyDown(KeyCode.Alpha1) || Input.touchCount > 0) && State == Constants.State_Idle)
         {
             State = Constants.State_Ready;
-          //  angleDisplayObject.SetActive(true);
+            angleDisplayObject.SetActive(true);
+            JumpMsg.text = "";
             // Trigger Angle Animation 
             // Get an angle - set diveAngle = getAngle from animation
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha2) || Input.touchCount == 0) && State == Constants.State_Ready) //
+        else if ((Input.GetKeyUp(KeyCode.Alpha2)) && State == Constants.State_Ready) // || Input.touchCount == 0
         { // Input.GetKeyUp(KeyCode.Space) && count == 0
 
-            //angleDisplayObject.SetActive(false);
-            //diveAngle = angleDisplayObject.transform.localRotation.eulerAngles.z;
+            angleDisplayObject.SetActive(false);
+            diveAngle = angleDisplayObject.transform.localRotation.eulerAngles.z;
             State = Constants.State_Jump;
             jump();
         }
@@ -64,7 +69,7 @@ public class Controller : MonoBehaviour
             tuck();
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha4) || Input.touchCount == 0) && State == Constants.State_Tuck) // 
+        else if ((Input.GetKeyUp(KeyCode.Alpha4)) && State == Constants.State_Tuck) // || Input.touchCount == 0
         {
             State = Constants.State_End;
             //End of Jump;
@@ -97,28 +102,44 @@ public class Controller : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-
         if (other.collider.gameObject.name == "Floor")
         {
             print(transform.eulerAngles.x);
             CheckValidLanding(transform.eulerAngles.x);
-            if (validLanding)
+            if (validLanding && hasTuck && State.Equals(Constants.State_End))
             {
                 // Code on valid landing
                 print("Valid Jump");
+                transform.position = getNewposition();
             }
             else
             {
+                if (!hasTuck)
+                {
+                    JumpMsg.text = "Did not tuck";
+                }
+                else if (!State.Equals(Constants.State_End))
+                {
+                    JumpMsg.text = "Still tucking";
+                }
+                else if (transform.eulerAngles.x > 0 && transform.eulerAngles.x < 180)
+                {
+                    JumpMsg.text = "Belly flop";
+                }
+                else
+                {
+                    JumpMsg.text = "Back flop";
+                }
+                transform.position = originalposition;
                 print("Invalid jump");
             }
+            State = Constants.State_Idle;
+            ani.SetBool("Crouch", false);
 
+            transform.rotation = originalrotation;
             print("collision");
             rb.useGravity = false;
             rb.isKinematic = true;
-            transform.rotation = originalposition;
-            
-            transform.position = new Vector3(-12.5f, 4.5f, 0f);
-
             //this.gameObject.SetActive(false);
             //GetComponent<GameObject>().SetActive(false);// gameObject.SetActive(false);
             //Destroy(currentObject);
@@ -127,6 +148,12 @@ public class Controller : MonoBehaviour
         {
             validLanding = false;
         }
+    }
+
+    private Vector3 getNewposition()
+    {
+        lastposition = new Vector3(lastposition.x - 0.5f, lastposition.y + 6.5f, lastposition.z);
+        return lastposition;
     }
 
     private void CheckValidLanding(float angle)
@@ -144,6 +171,7 @@ public class Controller : MonoBehaviour
         rb.AddTorque(new Vector3(0, 0, 10) * -100, ForceMode.Force);
         //rb.centerOfMass = new Vector3(rb.centerOfMass.x, rb.centerOfMass.y + 0.25f);
         ani.SetBool("Crouch", true);
+        hasTuck = true;
     }
 
     private void jump()
