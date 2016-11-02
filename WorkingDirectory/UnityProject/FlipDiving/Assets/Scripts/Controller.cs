@@ -146,13 +146,17 @@ public class Controller : MonoBehaviour
                 lastposition = originalposition;
                 print("Invalid jump");
             }
-            State = Constants.State_Idle;
-            ani.SetBool("Crouch", false);
-            currentElevation = 1;
-            transform.rotation = originalrotation;
-            print("collision");
-            rb.useGravity = false;
-            rb.isKinematic = true;
+
+            setDefaultPosition(other);
+
+            //State = Constants.State_Idle;
+            //ani.SetBool("Crouch", false);
+            //currentElevation = 1;
+            //transform.rotation = originalrotation;
+            //print("collision");
+            //rb.useGravity = false;
+            //rb.isKinematic = true;
+
             //this.gameObject.SetActive(false);
             //GetComponent<GameObject>().SetActive(false);// gameObject.SetActive(false);
             //Destroy(currentObject);
@@ -161,15 +165,28 @@ public class Controller : MonoBehaviour
         {
             validLanding = false;
             JumpMsg.text = "Got hit";
-            State = Constants.State_Idle;
             lastposition = originalposition;
-            currentElevation = 1;
             transform.position = originalposition;
-            ani.SetBool("Crouch", false);
-            transform.rotation = originalrotation;
-            rb.useGravity = false;
-            rb.isKinematic = true;
+            setDefaultPosition(other);
         }
+    }
+
+    private void setDefaultPosition(Collision other)
+    {
+        State = Constants.State_Idle;
+        currentElevation = 1;
+        ani.SetBool("Crouch", false);
+        transform.rotation = originalrotation;
+        rb.useGravity = false;
+        rb.isKinematic = true;
+        print("Coins");
+        coin.SetActiveRecursively(true);
+        //foreach (var item in GameObject.FindGameObjectsWithTag("Coin"))
+        //{
+        //    print("Active");
+        //    item.SetActive(true);
+        //    item.gameObject.SetActive(true);
+        //}
     }
 
     private void setAngleIndicator()
@@ -233,12 +250,14 @@ public class Controller : MonoBehaviour
             score = score + 1;
             SetCountText();
         }
+
     }
 
     void SetCountText()
     {
         countText.text = "Score: " + score.ToString();
     }
+
     // Position to jump
     public Vector3 getHumanPosition()
     {
