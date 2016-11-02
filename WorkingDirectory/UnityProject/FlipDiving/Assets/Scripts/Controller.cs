@@ -9,20 +9,23 @@ public class Controller : MonoBehaviour
     private Rigidbody rb;
     private Cubemap c;
     private Animator ani;
-    private int count = 0; 
+    private int count = 0;
     private bool hasTuck;
     private bool validLanding;
-
-    public float diveAngle = 60;
-    public string State = Constants.State_Idle;
-    public GameObject angleDisplayObject;
-    public GameObject coin;
-    public Text JumpMsg;
     private Quaternion originalrotation;
     private Vector3 originalposition;
     private Vector3 lastposition;
     private int score;
+    private int currentElevation = 1;
+
+    private float diveAngle = 60;
+    public string State = Constants.State_Idle;
+    public GameObject angleDisplayObject;
+    public GameObject coin;
+    public Text JumpMsg;
     public Text countText;
+    public int Elevations;
+    public int JumpForce = 250;
 
     void Awake()
     {
@@ -53,7 +56,8 @@ public class Controller : MonoBehaviour
         if ((Input.GetKeyDown(KeyCode.Alpha1) || Input.touchCount > 0) && State == Constants.State_Idle)
         {
             State = Constants.State_Ready;
-            angleDisplayObject.SetActive(true);
+            //angleDisplayObject.SetActive(true);
+            setAngleIndicator();
             JumpMsg.text = "";
             // Trigger Angle Animation 
             // Get an angle - set diveAngle = getAngle from animation
@@ -64,8 +68,8 @@ public class Controller : MonoBehaviour
 
             angleDisplayObject.SetActive(false);
             diveAngle = angleDisplayObject.transform.localRotation.eulerAngles.z;
-            State = Constants.State_Jump;
             jump();
+            State = Constants.State_Jump;
         }
         else if ((Input.GetKeyDown(KeyCode.Alpha3) || Input.touchCount > 0) && State == Constants.State_Jump)
         { // Input.GetKeyUp(KeyCode.Space) && count == 1
@@ -106,10 +110,14 @@ public class Controller : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
+
+
+
         if (other.collider.gameObject.name == "Floor")
         {
-            print(transform.eulerAngles.x);
-            CheckValidLanding(transform.eulerAngles.x);
+            print(Quaternion.Angle(originalrotation, transform.rotation));
+            //CheckValidLanding(transform.eulerAngles.x);
+            CheckValidLanding(Quaternion.Angle(originalrotation, transform.rotation));
             if (validLanding && hasTuck && State.Equals(Constants.State_End))
             {
                 // Code on valid landing
@@ -135,11 +143,12 @@ public class Controller : MonoBehaviour
                     JumpMsg.text = "Back flop";
                 }
                 transform.position = originalposition;
+                lastposition = originalposition;
                 print("Invalid jump");
             }
             State = Constants.State_Idle;
             ani.SetBool("Crouch", false);
-
+            currentElevation = 1;
             transform.rotation = originalrotation;
             print("collision");
             rb.useGravity = false;
@@ -148,24 +157,51 @@ public class Controller : MonoBehaviour
             //GetComponent<GameObject>().SetActive(false);// gameObject.SetActive(false);
             //Destroy(currentObject);
         }
-        else
+        else if (!(State.Equals(Constants.State_Idle)))
         {
             validLanding = false;
+            JumpMsg.text = "Got hit";
+            State = Constants.State_Idle;
+            lastposition = originalposition;
+            currentElevation = 1;
+            transform.position = originalposition;
+            ani.SetBool("Crouch", false);
+            transform.rotation = originalrotation;
+            rb.useGravity = false;
+            rb.isKinematic = true;
         }
+    }
+
+    private void setAngleIndicator()
+    {
+        angleDisplayObject.transform.position = transform.position + new Vector3(1f, +3.5f, 0f);
+        angleDisplayObject.SetActive(true);
     }
 
     private Vector3 getNewposition()
     {
-        lastposition = new Vector3(lastposition.x - 0.5f, lastposition.y + 6.5f, lastposition.z);
+        if (currentElevation < Elevations)
+        {
+            lastposition = new Vector3(lastposition.x - 0.5f, lastposition.y + 6.5f, lastposition.z);
+            currentElevation++;
+        }
         return lastposition;
     }
 
     private void CheckValidLanding(float angle)
     {
         // print(angle);
-        if ((140 < angle && angle < 220) || (320 < angle || angle < 40))
+        //if ((140 < angle && angle < 220) || (320 < angle || angle < 40))
+        //{
+        //    validLanding = true;
+        //}
+        if (angle < 45 || 135 < angle)
         {
             validLanding = true;
+        }
+        else
+        {
+            validLanding = false;
         }
     }
 
@@ -184,14 +220,14 @@ public class Controller : MonoBehaviour
         rb.isKinematic = false;
         rb.useGravity = true;
         Vector3 dir = Quaternion.AngleAxis(diveAngle, Vector3.forward) * Vector3.right;
-        rb.AddForce(dir * 250, ForceMode.Force);
+        rb.AddForce(dir * JumpForce, ForceMode.Force);
         //rb.velocity = new Vector3(5f, 5f, 0);
         rb.AddTorque(new Vector3(0, 0, 1) * -100);
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("Coin"))
+        if (other.gameObject.CompareTag("Coin"))
         {
             other.gameObject.SetActive(false);
             score = score + 1;
@@ -208,5 +244,5 @@ public class Controller : MonoBehaviour
     {
         return Vector3.zero;
         //return rb.position;
-    }   
+    }
 }
