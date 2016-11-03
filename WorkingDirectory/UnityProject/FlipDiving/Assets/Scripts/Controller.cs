@@ -26,6 +26,8 @@ public class Controller : MonoBehaviour
     public Text countText;
     public int Elevations;
     public int JumpForce = 250;
+    public Transform Camera;
+    public float CameraDistance = 10f;
 
     void Awake()
     {
@@ -53,6 +55,9 @@ public class Controller : MonoBehaviour
     void Update()
     {
 
+        Camera.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - CameraDistance);
+
+
         if ((Input.GetKeyDown(KeyCode.Alpha1) || Input.touchCount > 0) && State == Constants.State_Idle)
         {
             State = Constants.State_Ready;
@@ -63,7 +68,7 @@ public class Controller : MonoBehaviour
             // Get an angle - set diveAngle = getAngle from animation
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha2)) && State == Constants.State_Ready) // || Input.touchCount == 0
+        else if ((Input.GetKeyUp(KeyCode.Alpha2) || Input.touchCount == 0) && State == Constants.State_Ready) // || Input.touchCount == 0
         { // Input.GetKeyUp(KeyCode.Space) && count == 0
 
             angleDisplayObject.SetActive(false);
@@ -77,7 +82,7 @@ public class Controller : MonoBehaviour
             tuck();
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha4)) && State == Constants.State_Tuck) // || Input.touchCount == 0
+        else if ((Input.GetKeyUp(KeyCode.Alpha4) || Input.touchCount == 0) && State == Constants.State_Tuck) // || Input.touchCount == 0
         {
             State = Constants.State_End;
             //End of Jump;
@@ -146,6 +151,7 @@ public class Controller : MonoBehaviour
                 transform.position = originalposition;
                 lastposition = originalposition;
                 print("Invalid jump");
+                currentElevation = 1;
             }
 
             setDefaultPosition(other);
@@ -164,7 +170,7 @@ public class Controller : MonoBehaviour
         }
         else if (!(State.Equals(Constants.State_Idle)))
         {
-        currentElevation = 1;
+            currentElevation = 1;
             validLanding = false;
             JumpMsg.text = "Got hit";
             lastposition = originalposition;
@@ -203,6 +209,7 @@ public class Controller : MonoBehaviour
             lastposition = new Vector3(lastposition.x - 0.5f, lastposition.y + 6.5f, lastposition.z);
             currentElevation++;
         }
+        CameraDistance += 5f;
         return lastposition;
     }
 
