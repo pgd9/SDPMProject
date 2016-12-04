@@ -61,7 +61,7 @@ public class Controller : MonoBehaviour
         Camera.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - CameraDistance);
 
 
-        if ((Input.GetKeyDown(KeyCode.Alpha1) || Input.touchCount > 0) && State == Constants.State_Idle)
+        if ((Input.GetKeyDown(KeyCode.Alpha1)) && State == Constants.State_Idle) //|| Input.touchCount > 0
         {
             State = Constants.State_Ready;
             //angleDisplayObject.SetActive(true);
@@ -71,7 +71,7 @@ public class Controller : MonoBehaviour
             // Get an angle - set diveAngle = getAngle from animation
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha2) || Input.touchCount == 0) && State == Constants.State_Ready) // || Input.touchCount == 0
+        else if ((Input.GetKeyUp(KeyCode.Alpha2)) && State == Constants.State_Ready) // || Input.touchCount == 0
         { // Input.GetKeyUp(KeyCode.Space) && count == 0
 
             angleDisplayObject.SetActive(false);
@@ -79,13 +79,13 @@ public class Controller : MonoBehaviour
             jump();
             State = Constants.State_Jump;
         }
-        else if ((Input.GetKeyDown(KeyCode.Alpha3) || Input.touchCount > 0) && State == Constants.State_Jump)
+        else if ((Input.GetKeyDown(KeyCode.Alpha3)) && State == Constants.State_Jump) // || Input.touchCount > 0
         { // Input.GetKeyUp(KeyCode.Space) && count == 1
             State = Constants.State_Tuck;
             tuck();
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha4) || Input.touchCount == 0) && State == Constants.State_Tuck) // || Input.touchCount == 0
+        else if ((Input.GetKeyUp(KeyCode.Alpha4)) && State == Constants.State_Tuck) // || Input.touchCount == 0
         {
             State = Constants.State_End;
             //End of Jump;
@@ -190,6 +190,7 @@ public class Controller : MonoBehaviour
         rb.useGravity = false;
         rb.isKinematic = true;
         print("Coins");
+        hasTuck = false;
         coin.SetActiveRecursively(true);
         //foreach (var item in GameObject.FindGameObjectsWithTag("Coin"))
         //{
