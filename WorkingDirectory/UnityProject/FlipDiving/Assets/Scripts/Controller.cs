@@ -17,6 +17,7 @@ public class Controller : MonoBehaviour
     private Vector3 lastposition;
     private int score;
     private int currentElevation = 1;
+    private int life;
 
     private float diveAngle = 60;
     public string State = Constants.State_Idle;
@@ -24,6 +25,7 @@ public class Controller : MonoBehaviour
     public GameObject coin;
     public Text JumpMsg;
     public Text countText;
+    public Text lifeText;
     public int Elevations;
     public int JumpForce = 250;
     public Transform Camera;
@@ -48,6 +50,7 @@ public class Controller : MonoBehaviour
         ani.applyRootMotion = false;
         angleDisplayObject.SetActive(false);
         score = 0;
+        life = 0;
         SetCountText();
     }
 
@@ -258,7 +261,13 @@ public class Controller : MonoBehaviour
             score = score + 1;
             SetCountText();
         }
-
+        
+        if(other.gameObject.CompareTag("Elixir"))
+        {
+            other.gameObject.SetActive(false);
+            life = life + 1;
+            SetLifeText();
+        }
     }
 
     void SetCountText()
@@ -266,6 +275,10 @@ public class Controller : MonoBehaviour
         countText.text = "Score: " + score.ToString();
     }
 
+    void SetLifeText()
+    {
+        lifeText.text = "Life: " + life.ToString();
+    }
     // Position to jump
     public Vector3 getHumanPosition()
     {
