@@ -61,7 +61,7 @@ public class Controller : MonoBehaviour
     {
 
         Camera.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - CameraDistance);
-
+        PlayerPrefs.SetInt("scorePref", score);
 
         if ((Input.GetKeyDown(KeyCode.Alpha1)) && State == Constants.State_Idle) //|| Input.touchCount > 0
         {
