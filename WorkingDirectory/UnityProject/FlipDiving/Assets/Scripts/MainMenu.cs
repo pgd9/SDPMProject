@@ -14,6 +14,11 @@ public class MainMenu : MonoBehaviour
     private Transform cameraTransform;
     private Transform cameraDesiredLookAt;
 
+    void Awake()
+    {
+        PlayerPrefs.SetInt("MaxLevel", 1);
+    }
+
     private void Start()
     {
 
@@ -21,15 +26,23 @@ public class MainMenu : MonoBehaviour
 
         Sprite[] thumbnails = Resources.LoadAll<Sprite>("Levels");
         int count = 0;
+        int MaxLevel = PlayerPrefs.GetInt("MaxLevel");
         foreach (Sprite thumbnail in thumbnails)
         {
+            ++count;
             GameObject container = Instantiate(levelButtonPrefab) as GameObject;
             container.GetComponent<Image>().sprite = thumbnail;
-            container.GetComponentInChildren<Text>().text = "Level " + ++count;
             container.transform.SetParent(levelButtonContainer.transform, false);
-
-            string sceneName = thumbnail.name;
-            container.GetComponent<Button>().onClick.AddListener(() => LoadLevel(sceneName));
+            if (count <= MaxLevel)
+            {
+                container.GetComponentInChildren<Text>().text = "Level " + count;
+                string sceneName = thumbnail.name;
+                container.GetComponent<Button>().onClick.AddListener(() => LoadLevel(sceneName));
+            }
+            else
+            {
+                container.GetComponentInChildren<Text>().text = "LOCKED";
+            }
         }
     }
 
