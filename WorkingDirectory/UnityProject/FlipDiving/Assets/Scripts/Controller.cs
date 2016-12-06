@@ -40,6 +40,11 @@ public class Controller : MonoBehaviour
         lastposition = originalposition;
     }
 
+    void OnApplicationPause(bool pauseStatus)
+    {
+        Time.timeScale = pauseStatus ? 0 : 1;
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -62,6 +67,12 @@ public class Controller : MonoBehaviour
 
         Camera.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - CameraDistance);
         PlayerPrefs.SetInt("scorePref", score);
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+        }
+
 
         if ((Input.GetKeyDown(KeyCode.Alpha1)) && State == Constants.State_Idle) //|| Input.touchCount > 0
         {
@@ -264,8 +275,8 @@ public class Controller : MonoBehaviour
             score = score + 1;
             SetCountText();
         }
-        
-        if(other.gameObject.CompareTag("Elixir"))
+
+        if (other.gameObject.CompareTag("Elixir"))
         {
             other.gameObject.SetActive(false);
             life = life + 1;
