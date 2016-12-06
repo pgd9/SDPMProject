@@ -49,7 +49,9 @@ public class Controller : MonoBehaviour
         ani = GetComponent<Animator>();
         ani.applyRootMotion = false;
         angleDisplayObject.SetActive(false);
-        score = 0;
+        //score = 0;
+        PlayerPrefs.GetInt("scorePref");
+        score = PlayerPrefs.GetInt("scorePref");
         life = 0;
         SetCountText();
     }
