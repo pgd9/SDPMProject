@@ -3053,6 +3053,7 @@ MonoBehaviour:
   Camera: {fileID: 1487526861}
   CameraDistance: 10
   Obstacle: {fileID: 1064227602}
+  PlayerChangeButton: {fileID: 808071804}
 --- !u!136 &816700701
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3837,7 +3838,8 @@ MonoBehaviour:
   JumpForce: 550
   Camera: {fileID: 1487526861}
   CameraDistance: 10
-  Obstacle: {fileID: 0}
+  Obstacle: {fileID: 1064227602}
+  PlayerChangeButton: {fileID: 808071804}
 --- !u!4 &886472117 stripped
 Transform:
   m_PrefabParentObject: {fileID: 408730, guid: 7737647c22c1fc64a88d5cd030c352ce, type: 2}

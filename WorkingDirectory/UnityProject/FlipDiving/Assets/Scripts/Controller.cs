@@ -34,6 +34,7 @@ public class Controller : MonoBehaviour
     public Transform Camera;
     public float CameraDistance = 10f;
     public GameObject Obstacle;
+    public GameObject PlayerChangeButton;
 
     void Awake()
     {
@@ -52,7 +53,6 @@ public class Controller : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        SetLifeText();
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.useGravity = false;
@@ -66,6 +66,8 @@ public class Controller : MonoBehaviour
         PlayerPrefs.GetInt("lifePref");
         life = PlayerPrefs.GetInt("lifePref");
         SetCountText();
+        SetLifeText();
+
     }
 
     // Update is called once per frame
@@ -73,8 +75,11 @@ public class Controller : MonoBehaviour
     {
 
         Camera.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - CameraDistance);
-        PlayerPrefs.SetInt("scorePref", score);
-        PlayerPrefs.SetInt("lifePref", life);
+        //PlayerPrefs.SetInt("scorePref", score);
+        //PlayerPrefs.SetInt("lifePref", life);
+
+        PlayerChangeButton.SetActive(State.Equals(Constants.State_Idle));
+
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -353,11 +358,15 @@ public class Controller : MonoBehaviour
     void SetCountText()
     {
         countText.text = "Score: " + score.ToString();
+        PlayerPrefs.SetInt("scorePref", score);
+
     }
 
     void SetLifeText()
     {
         lifeText.text = "Life: " + life.ToString();
+        PlayerPrefs.SetInt("lifePref", life);
+
     }
     // Position to jump
     public Vector3 getHumanPosition()

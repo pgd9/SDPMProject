@@ -48,6 +48,7 @@
      <Compile Include="Assets\Characters\Scripts\AICharacterControl.cs" />
      <Compile Include="Assets\Characters\Scripts\ThirdPersonCharacter.cs" />
      <Compile Include="Assets\Characters\Scripts\ThirdPersonUserControl.cs" />
+     <Compile Include="Assets\ClickSound.cs" />
      <Compile Include="Assets\GameplaySound.cs" />
      <Compile Include="Assets\MORPH3D\Vendor\Unity\Shaders\Hair\HairRenderer.cs" />
      <Compile Include="Assets\MORPH3D\Vendor\Unity\Shaders\UniqueShadow\UniqueShadow.cs" />
