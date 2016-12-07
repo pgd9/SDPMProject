@@ -240,12 +240,22 @@ public class Controller : MonoBehaviour
         }
         else if (!(State.Equals(Constants.State_Idle)))
         {
-            currentElevation = 1;
-            validLanding = false;
-            JumpMsg.text = "Got hit";
-            lastposition = originalposition;
-            transform.position = originalposition;
-            setDefaultPosition(other);
+
+            if (life >= 1)
+            {
+                life = life - 1;
+                transform.position = lastposition;
+                SetLifeText();
+            }
+            else
+            {
+                currentElevation = 1;
+                validLanding = false;
+                JumpMsg.text = "Got hit";
+                lastposition = originalposition;
+                transform.position = originalposition;
+            }
+            setDefaultPosition(other);            
         }
         timer = 1.25f;
     }
