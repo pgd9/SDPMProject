@@ -102,11 +102,11 @@ MonoBehaviour:
   - _dazName: Genesis2Female__PHMFaceYoung
     _ID: PHMFaceYoung
     Label: Face Young
-  - _dazName: Genesis2Female__FBMGoblin
-    _ID: FBMGoblin
-    Label: Goblin
   - _dazName: Genesis2Female__FHMGoblin
     _ID: FHMGoblin
+    Label: Goblin
+  - _dazName: Genesis2Female__FBMGoblin
+    _ID: FBMGoblin
     Label: Goblin
   - _dazName: Genesis2Female__FHMHag
     _ID: FHMHag
