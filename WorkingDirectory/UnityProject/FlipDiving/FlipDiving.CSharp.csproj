@@ -81,6 +81,7 @@
     <Compile Include="Assets\Characters\Scripts\AICharacterControl.cs" />
     <Compile Include="Assets\Characters\Scripts\ThirdPersonCharacter.cs" />
     <Compile Include="Assets\Characters\Scripts\ThirdPersonUserControl.cs" />
+    <Compile Include="Assets\GameplaySound.cs" />
     <Compile Include="Assets\MORPH3D\Vendor\Unity\Shaders\Hair\HairRenderer.cs" />
     <Compile Include="Assets\MORPH3D\Vendor\Unity\Shaders\UniqueShadow\UniqueShadow.cs" />
     <Compile Include="Assets\MORPH3D\Vendor\Unity\Shaders\UniqueShadow\UniqueShadowSun.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Assets\Scripts\MainMenu.cs" />
     <Compile Include="Assets\Scripts\UIScript.cs" />
     <Compile Include="Assets\Scripts\pendulum.cs" />
+    <Compile Include="Assets\Sound.cs" />
     <Compile Include="Assets\cameraController.cs" />
   </ItemGroup>
   <ItemGroup>
