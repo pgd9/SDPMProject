@@ -16,16 +16,12 @@ public class MainMenu : MonoBehaviour
 
     void Awake()
     {
-        if (PlayerPrefs.GetInt("MaxLevel") < 1)
-        {
-            PlayerPrefs.SetInt("MaxLevel", 1);
-        }
-
+        PlayerPrefs.SetInt("MaxLevel", 1);
     }
 
     private void Start()
     {
-        //print("MMStart " + PlayerPrefs.GetInt("MaxLevel"));
+
         cameraTransform = Camera.main.transform;
 
         Sprite[] thumbnails = Resources.LoadAll<Sprite>("Levels");
