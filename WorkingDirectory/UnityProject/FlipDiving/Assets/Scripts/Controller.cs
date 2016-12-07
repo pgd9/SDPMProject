@@ -61,7 +61,9 @@ public class Controller : MonoBehaviour
         //score = 0;
         PlayerPrefs.GetInt("scorePref");
         score = PlayerPrefs.GetInt("scorePref");
-        life = 0;
+        //life = 0;
+        PlayerPrefs.GetInt("lifePref");
+        life = PlayerPrefs.GetInt("lifePref");
         SetCountText();
     }
 
@@ -71,6 +73,7 @@ public class Controller : MonoBehaviour
 
         Camera.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - CameraDistance);
         PlayerPrefs.SetInt("scorePref", score);
+        PlayerPrefs.SetInt("lifePref", life);
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -186,10 +189,24 @@ public class Controller : MonoBehaviour
                 {
                     JumpMsg.text = "Back flop";
                 }
-                transform.position = originalposition;
-                lastposition = originalposition;
+                if (life >= 1)
+                {
+                    life = life - 1;
+                    transform.position = lastposition;
+                    SetLifeText();
+                }
+                else
+                {
+                    transform.position = originalposition;
+                    lastposition = originalposition;
+                    //print("Invalid jump");
+                    currentElevation = 1;
+                }
+
+                //transform.position = originalposition;
+                //lastposition = originalposition;
                 //print("Invalid jump");
-                currentElevation = 1;
+                //currentElevation = 1;
             }
 
             setDefaultPosition(other);
