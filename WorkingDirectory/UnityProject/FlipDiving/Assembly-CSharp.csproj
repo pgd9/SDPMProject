@@ -48,6 +48,7 @@
      <Compile Include="Assets\Characters\Scripts\AICharacterControl.cs" />
      <Compile Include="Assets\Characters\Scripts\ThirdPersonCharacter.cs" />
      <Compile Include="Assets\Characters\Scripts\ThirdPersonUserControl.cs" />
+     <Compile Include="Assets\GameplaySound.cs" />
      <Compile Include="Assets\MORPH3D\Vendor\Unity\Shaders\Hair\HairRenderer.cs" />
      <Compile Include="Assets\MORPH3D\Vendor\Unity\Shaders\UniqueShadow\UniqueShadow.cs" />
      <Compile Include="Assets\MORPH3D\Vendor\Unity\Shaders\UniqueShadow\UniqueShadowSun.cs" />
@@ -60,6 +61,7 @@
      <Compile Include="Assets\Scripts\MainMenu.cs" />
      <Compile Include="Assets\Scripts\UIScript.cs" />
      <Compile Include="Assets\Scripts\pendulum.cs" />
+     <Compile Include="Assets\Sound.cs" />
      <Compile Include="Assets\cameraController.cs" />
      <None Include="Assets\MORPH3D\Readme.txt" />
      <None Include="Assets\Environment\Prototyping\Shaders\WorldCoordDiffuse.shader" />
@@ -84,20 +86,20 @@
      <None Include="Assets\Standard Assets\Environment\Water\Water4\Shaders\FXWater4Advanced.shader" />
      <None Include="Assets\MORPH3D\Vendor\Unity\Shaders\UniqueShadow\UniqueShadow_DepthOnly.shader" />
      <None Include="Assets\MORPH3D\Vendor\Unity\Shaders\Skin\Volund_StandardSpecularCharacter.shader" />
- <Reference Include="UnityEngine.UI">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <Reference Include="UnityEngine.Analytics">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
- <Reference Include="UnityEngine.Analytics">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ <Reference Include="UnityEngine.UI">
+ <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="M3DIMPORT_DLL">
- <HintPath>C:/Users/PratikDhumal/Desktop/Workspace/NJIT/SDPM/Project/SDPMProject/WorkingDirectory/UnityProject/FlipDiving/Assets/MORPH3D/scripts/Plugins/M3DIMPORT_DLL.dll</HintPath>
+ <HintPath>C:/Users/Mansi/Documents/GitHub/SDPMProject/WorkingDirectory/UnityProject/FlipDiving/Assets/MORPH3D/scripts/Plugins/M3DIMPORT_DLL.dll</HintPath>
  </Reference>
  <Reference Include="M3D_DLL">
- <HintPath>C:/Users/PratikDhumal/Desktop/Workspace/NJIT/SDPM/Project/SDPMProject/WorkingDirectory/UnityProject/FlipDiving/Assets/MORPH3D/scripts/Plugins/M3D_DLL.dll</HintPath>
+ <HintPath>C:/Users/Mansi/Documents/GitHub/SDPMProject/WorkingDirectory/UnityProject/FlipDiving/Assets/MORPH3D/scripts/Plugins/M3D_DLL.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

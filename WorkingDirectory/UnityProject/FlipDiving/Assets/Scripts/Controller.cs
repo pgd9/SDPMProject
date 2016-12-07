@@ -33,6 +33,7 @@ public class Controller : MonoBehaviour
     public int JumpForce = 250;
     public Transform Camera;
     public float CameraDistance = 10f;
+    public GameObject Obstacle;
 
     void Awake()
     {
@@ -154,6 +155,11 @@ public class Controller : MonoBehaviour
         //}
     }
 
+    bool IsObstacleHit()
+    {
+        return Obstacle.transform.position.x > transform.position.x ? false : true;
+    }
+
     void OnCollisionEnter(Collision other)
     {
         if (other.collider.gameObject.name == "Floor")
@@ -161,7 +167,7 @@ public class Controller : MonoBehaviour
             //print(Quaternion.Angle(originalrotation, transform.rotation));
             //CheckValidLanding(transform.eulerAngles.x);
             CheckValidLanding(Quaternion.Angle(originalrotation, transform.rotation));
-            if (validLanding && hasTuck && State.Equals(Constants.State_End))
+            if (!IsObstacleHit() && validLanding && hasTuck && State.Equals(Constants.State_End))
             {
                 // Code on valid landing
                 //print("Valid Jump");
@@ -173,7 +179,11 @@ public class Controller : MonoBehaviour
             }
             else
             {
-                if (!hasTuck)
+                if (IsObstacleHit())
+                {
+                    JumpMsg.text = "Missed Landing";
+                }
+                else if (!hasTuck)
                 {
                     JumpMsg.text = "Did not tuck";
                 }
