@@ -2,6 +2,7 @@
 using System.Collections;
 using Assets.Scripts.HelperScripts;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 //using UnityStandardAssets.Characters.ThirdPerson;
 
 public class Controller : MonoBehaviour
@@ -18,8 +19,10 @@ public class Controller : MonoBehaviour
     private int score;
     private int currentElevation = 1;
     private int life;
-
+    private float timer = 0f;
     private float diveAngle = 60;
+    private bool AllowNewLevel = false;
+    private int CurrentSceneLevel;
     public string State = Constants.State_Idle;
     public GameObject angleDisplayObject;
     public GameObject coin;
@@ -48,6 +51,7 @@ public class Controller : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        SetLifeText();
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.useGravity = false;
@@ -70,10 +74,29 @@ public class Controller : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+            SceneManager.LoadScene("Main Menu");
+            //Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+        }
+        timer -= Time.deltaTime;
+        if (timer <= 0)
+        {
+            JumpMsg.text = "";
+            if (AllowNewLevel)
+            {
+                PlayerPrefs.SetInt("MaxLevel", ++CurrentSceneLevel);
+                //print(PlayerPrefs.GetInt("MaxLevel"));
+                SceneManager.LoadScene("Level" + CurrentSceneLevel);
+            }
+            else
+            {
+                ProcessInput();
+            }
         }
 
+    }
 
+    private void ProcessInput()
+    {
         if ((Input.GetKeyDown(KeyCode.Alpha1)) && State == Constants.State_Idle) //|| Input.touchCount > 0
         {
             State = Constants.State_Ready;
@@ -107,7 +130,6 @@ public class Controller : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
             ani.SetBool("Crouch", false);
         }
-
     }
 
     private void FixedUpdate()
@@ -131,20 +153,20 @@ public class Controller : MonoBehaviour
 
     void OnCollisionEnter(Collision other)
     {
-
-
-
         if (other.collider.gameObject.name == "Floor")
         {
-            print(Quaternion.Angle(originalrotation, transform.rotation));
+            //print(Quaternion.Angle(originalrotation, transform.rotation));
             //CheckValidLanding(transform.eulerAngles.x);
             CheckValidLanding(Quaternion.Angle(originalrotation, transform.rotation));
             if (validLanding && hasTuck && State.Equals(Constants.State_End))
             {
                 // Code on valid landing
-                print("Valid Jump");
+                //print("Valid Jump");
                 transform.position = getNewposition();
-                JumpMsg.text = "Awesome!";
+                if (!AllowNewLevel)
+                {
+                    JumpMsg.text = "Awesome!";
+                }
             }
             else
             {
@@ -166,7 +188,7 @@ public class Controller : MonoBehaviour
                 }
                 transform.position = originalposition;
                 lastposition = originalposition;
-                print("Invalid jump");
+                //print("Invalid jump");
                 currentElevation = 1;
             }
 
@@ -193,6 +215,7 @@ public class Controller : MonoBehaviour
             transform.position = originalposition;
             setDefaultPosition(other);
         }
+        timer = 1.25f;
     }
 
     private void setDefaultPosition(Collision other)
@@ -202,7 +225,7 @@ public class Controller : MonoBehaviour
         transform.rotation = originalrotation;
         rb.useGravity = false;
         rb.isKinematic = true;
-        print("Coins");
+        //print("Coins");
         hasTuck = false;
         coin.SetActiveRecursively(true);
         //foreach (var item in GameObject.FindGameObjectsWithTag("Coin"))
@@ -225,6 +248,22 @@ public class Controller : MonoBehaviour
         {
             lastposition = new Vector3(lastposition.x - 0.5f, lastposition.y + 6.5f, lastposition.z);
             currentElevation++;
+        }
+        else
+        {
+            string SceneName = SceneManager.GetActiveScene().name;
+            CurrentSceneLevel = int.Parse(SceneName.Replace("Level", ""));
+            if (CurrentSceneLevel == 5)
+            {
+                JumpMsg.text = "You have completed all the levels!";
+            }
+            else if (CurrentSceneLevel * 5 < PlayerPrefs.GetInt("scorePref"))
+            {
+                //print(CurrentSceneLevel * 5);
+                AllowNewLevel = true;
+                timer = 5f;
+                JumpMsg.text = "You have unlocked a new level!!";
+            }
         }
         CameraDistance += 5f;
         return lastposition;
