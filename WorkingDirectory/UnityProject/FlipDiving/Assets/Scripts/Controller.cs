@@ -106,7 +106,7 @@ public class Controller : MonoBehaviour
 
     private void ProcessInput()
     {
-        if ((Input.GetKeyDown(KeyCode.Alpha1)) && State == Constants.State_Idle) //|| Input.touchCount > 0
+        if ((Input.GetKeyDown(KeyCode.Alpha1) || Input.touchCount > 0) && State == Constants.State_Idle) //|| Input.touchCount > 0
         {
             State = Constants.State_Ready;
             //angleDisplayObject.SetActive(true);
@@ -116,7 +116,7 @@ public class Controller : MonoBehaviour
             // Get an angle - set diveAngle = getAngle from animation
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha2)) && State == Constants.State_Ready) // || Input.touchCount == 0
+        else if ((Input.GetKeyUp(KeyCode.Alpha2) || Input.touchCount == 0) && State == Constants.State_Ready) // || Input.touchCount == 0
         { // Input.GetKeyUp(KeyCode.Space) && count == 0
 
             angleDisplayObject.SetActive(false);
@@ -124,13 +124,13 @@ public class Controller : MonoBehaviour
             jump();
             State = Constants.State_Jump;
         }
-        else if ((Input.GetKeyDown(KeyCode.Alpha3)) && State == Constants.State_Jump) // || Input.touchCount > 0
+        else if ((Input.GetKeyDown(KeyCode.Alpha3) || Input.touchCount > 0) && State == Constants.State_Jump) // || Input.touchCount > 0
         { // Input.GetKeyUp(KeyCode.Space) && count == 1
             State = Constants.State_Tuck;
             tuck();
         }
 
-        else if ((Input.GetKeyUp(KeyCode.Alpha4)) && State == Constants.State_Tuck) // || Input.touchCount == 0
+        else if ((Input.GetKeyUp(KeyCode.Alpha4) || Input.touchCount == 0) && State == Constants.State_Tuck) // || Input.touchCount == 0
         {
             State = Constants.State_End;
             //End of Jump;
@@ -304,7 +304,7 @@ public class Controller : MonoBehaviour
                 //print(CurrentSceneLevel * 5);
                 AllowNewLevel = true;
                 timer = 5f;
-                JumpMsg.text = "You have unlocked a new level!!";
+                JumpMsg.text = "New Level Unlocked";
             }
         }
         CameraDistance += 5f;

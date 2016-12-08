@@ -1738,6 +1738,21 @@ Prefab:
       propertyPath: m_Text
       value: "Level\n   #"
       objectReference: {fileID: 0}
+    - target: {fileID: 114000011051753142, guid: 21cfabd0a5edaab4aa3663a0e6c99268,
+        type: 2}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011051753142, guid: 21cfabd0a5edaab4aa3663a0e6c99268,
+        type: 2}
+      propertyPath: m_FontData.m_Alignment
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011051753142, guid: 21cfabd0a5edaab4aa3663a0e6c99268,
+        type: 2}
+      propertyPath: m_FontData.m_FontSize
+      value: 18
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 21cfabd0a5edaab4aa3663a0e6c99268, type: 2}
   m_IsPrefabParent: 0

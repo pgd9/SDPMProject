@@ -20,7 +20,7 @@ public class MainMenu : MonoBehaviour
         {
             PlayerPrefs.SetInt("MaxLevel", 1);
         }
-
+        ////PlayerPrefs.SetInt("MaxLevel", 5);
     }
 
     private void Start()
@@ -39,13 +39,22 @@ public class MainMenu : MonoBehaviour
             container.transform.SetParent(levelButtonContainer.transform, false);
             if (count <= MaxLevel)
             {
-                container.GetComponentInChildren<Text>().text = "Level " + count;
+                //container.GetComponentInChildren<Text>().text = "Level " + count;
+                var textElement = container.GetComponentInChildren<Text>();
+                //textElement.resizeTextForBestFit = true;
+                textElement.fontSize = 16;
+                textElement.text = "Level " + count;
+                //textElement.resizeTextForBestFit = true;
+
                 string sceneName = thumbnail.name;
                 container.GetComponent<Button>().onClick.AddListener(() => LoadLevel(sceneName));
             }
             else
             {
-                container.GetComponentInChildren<Text>().text = "LOCKED";
+                var textElement = container.GetComponentInChildren<Text>();
+
+                textElement.text = "LOCKED";
+                textElement.resizeTextForBestFit = true;
             }
         }
     }
@@ -55,6 +64,10 @@ public class MainMenu : MonoBehaviour
         if (cameraDesiredLookAt != null)
         {
             cameraTransform.rotation = Quaternion.Slerp(cameraTransform.rotation, cameraDesiredLookAt.rotation, CAMERA_TRANSITION_SPEED * Time.deltaTime);
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
         }
     }
 
