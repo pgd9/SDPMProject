@@ -1,0 +1,387 @@
+﻿using UnityEngine;
+using System.Collections;
+using Assets.Scripts.HelperScripts;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+//using UnityStandardAssets.Characters.ThirdPerson;
+
+public class Controller : MonoBehaviour
+{
+    private Rigidbody rb;
+    private Cubemap c;
+    private Animator ani;
+    private int count = 0;
+    private bool hasTuck;
+    private bool validLanding;
+    private Quaternion originalrotation;
+    private Vector3 originalposition;
+    private Vector3 lastposition;
+    private int score;
+    private int currentElevation = 1;
+    private int life;
+    private float timer = 0f;
+    private float diveAngle = 60;
+    private bool AllowNewLevel = false;
+    private int CurrentSceneLevel;
+    public string State = Constants.State_Idle;
+    public GameObject angleDisplayObject;
+    public GameObject coin;
+    public Text JumpMsg;
+    public Text countText;
+    public Text lifeText;
+    public int Elevations;
+    public int JumpForce = 250;
+    public Transform Camera;
+    public float CameraDistance = 10f;
+    public GameObject Obstacle;
+    public GameObject PlayerChangeButton;
+
+    void Awake()
+    {
+        ani = GetComponent<Animator>();
+        ani.applyRootMotion = false;
+        originalrotation = transform.rotation;
+        originalposition = transform.position;
+        lastposition = originalposition;
+    }
+
+    void OnApplicationPause(bool pauseStatus)
+    {
+        Time.timeScale = pauseStatus ? 0 : 1;
+    }
+
+    // Use this for initialization
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.isKinematic = true;
+        rb.useGravity = false;
+        ani = GetComponent<Animator>();
+        ani.applyRootMotion = false;
+        angleDisplayObject.SetActive(false);
+        //score = 0;
+        PlayerPrefs.GetInt("scorePref");
+        score = PlayerPrefs.GetInt("scorePref");
+        //life = 0;
+        PlayerPrefs.GetInt("lifePref");
+        life = PlayerPrefs.GetInt("lifePref");
+        SetCountText();
+        SetLifeText();
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        Camera.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - CameraDistance);
+        //PlayerPrefs.SetInt("scorePref", score);
+        //PlayerPrefs.SetInt("lifePref", life);
+
+        PlayerChangeButton.SetActive(State.Equals(Constants.State_Idle));
+
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene("Main Menu");
+            //Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+        }
+        timer -= Time.deltaTime;
+        if (timer <= 0)
+        {
+            JumpMsg.text = "";
+            if (AllowNewLevel)
+            {
+                PlayerPrefs.SetInt("MaxLevel", ++CurrentSceneLevel);
+                //print(PlayerPrefs.GetInt("MaxLevel"));
+                SceneManager.LoadScene("Level" + CurrentSceneLevel);
+            }
+            else
+            {
+                ProcessInput();
+            }
+        }
+
+    }
+
+    private void ProcessInput()
+    {
+        if ((Input.GetKeyDown(KeyCode.Alpha1) || Input.touchCount > 0) && State == Constants.State_Idle) //|| Input.touchCount > 0
+        {
+            State = Constants.State_Ready;
+            //angleDisplayObject.SetActive(true);
+            setAngleIndicator();
+            JumpMsg.text = "";
+            // Trigger Angle Animation 
+            // Get an angle - set diveAngle = getAngle from animation
+        }
+
+        else if ((Input.GetKeyUp(KeyCode.Alpha2) || Input.touchCount == 0) && State == Constants.State_Ready) // || Input.touchCount == 0
+        { // Input.GetKeyUp(KeyCode.Space) && count == 0
+
+            angleDisplayObject.SetActive(false);
+            diveAngle = angleDisplayObject.transform.localRotation.eulerAngles.z;
+            jump();
+            State = Constants.State_Jump;
+        }
+        else if ((Input.GetKeyDown(KeyCode.Alpha3) || Input.touchCount > 0) && State == Constants.State_Jump) // || Input.touchCount > 0
+        { // Input.GetKeyUp(KeyCode.Space) && count == 1
+            State = Constants.State_Tuck;
+            tuck();
+        }
+
+        else if ((Input.GetKeyUp(KeyCode.Alpha4) || Input.touchCount == 0) && State == Constants.State_Tuck) // || Input.touchCount == 0
+        {
+            State = Constants.State_End;
+            //End of Jump;
+            // Evaluate fair jump;
+            rb.ResetCenterOfMass();
+            rb.angularVelocity = Vector3.zero;
+            ani.SetBool("Crouch", false);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (transform.localRotation.eulerAngles.x > 179 && State == Constants.State_Jump)
+        {
+            //rb.angularVelocity = Vector3.zero;
+        }
+
+
+
+        //if (count == 1)
+        //{
+
+        //    rb.AddTorque(new Vector3(0, 0, 10) * -100, ForceMode.Force);
+        //    //rb.centerOfMass = new Vector3(rb.centerOfMass.x, rb.centerOfMass.y + 0.25f);
+        //    ani.SetBool("Crouch", true);
+        //    print(1);
+        //}
+    }
+
+    bool IsObstacleHit()
+    {
+        return Obstacle.transform.position.x > transform.position.x ? false : true;
+    }
+
+    void OnCollisionEnter(Collision other)
+    {
+        if (other.collider.gameObject.name == "Floor")
+        {
+            //print(Quaternion.Angle(originalrotation, transform.rotation));
+            //CheckValidLanding(transform.eulerAngles.x);
+            CheckValidLanding(Quaternion.Angle(originalrotation, transform.rotation));
+            if (!IsObstacleHit() && validLanding && hasTuck && State.Equals(Constants.State_End))
+            {
+                // Code on valid landing
+                //print("Valid Jump");
+                transform.position = getNewposition();
+                if (!AllowNewLevel)
+                {
+                    JumpMsg.text = "Awesome!";
+                }
+            }
+            else
+            {
+                if (IsObstacleHit())
+                {
+                    JumpMsg.text = "Missed Landing";
+                }
+                else if (!hasTuck)
+                {
+                    JumpMsg.text = "Did not tuck";
+                }
+                else if (!State.Equals(Constants.State_End))
+                {
+                    JumpMsg.text = "Still tucking";
+                }
+                else if (transform.eulerAngles.x > 0 && transform.eulerAngles.x < 180)
+                {
+                    JumpMsg.text = "Belly flop";
+                }
+                else
+                {
+                    JumpMsg.text = "Back flop";
+                }
+                if (life >= 1)
+                {
+                    life = life - 1;
+                    transform.position = lastposition;
+                    SetLifeText();
+                }
+                else
+                {
+                    transform.position = originalposition;
+                    lastposition = originalposition;
+                    //print("Invalid jump");
+                    currentElevation = 1;
+                }
+
+                //transform.position = originalposition;
+                //lastposition = originalposition;
+                //print("Invalid jump");
+                //currentElevation = 1;
+            }
+
+            setDefaultPosition(other);
+
+            //State = Constants.State_Idle;
+            //ani.SetBool("Crouch", false);
+            //currentElevation = 1;
+            //transform.rotation = originalrotation;
+            //print("collision");
+            //rb.useGravity = false;
+            //rb.isKinematic = true;
+
+            //this.gameObject.SetActive(false);
+            //GetComponent<GameObject>().SetActive(false);// gameObject.SetActive(false);
+            //Destroy(currentObject);
+        }
+        else if (!(State.Equals(Constants.State_Idle)))
+        {
+
+            if (life >= 1)
+            {
+                life = life - 1;
+                transform.position = lastposition;
+                SetLifeText();
+            }
+            else
+            {
+                currentElevation = 1;
+                validLanding = false;
+                JumpMsg.text = "Got hit";
+                lastposition = originalposition;
+                transform.position = originalposition;
+            }
+            setDefaultPosition(other);            
+        }
+        timer = 1.25f;
+    }
+
+    private void setDefaultPosition(Collision other)
+    {
+        State = Constants.State_Idle;
+        ani.SetBool("Crouch", false);
+        transform.rotation = originalrotation;
+        rb.useGravity = false;
+        rb.isKinematic = true;
+        //print("Coins");
+        hasTuck = false;
+        coin.SetActiveRecursively(true);
+        //foreach (var item in GameObject.FindGameObjectsWithTag("Coin"))
+        //{
+        //    print("Active");
+        //    item.SetActive(true);
+        //    item.gameObject.SetActive(true);
+        //}
+    }
+
+    private void setAngleIndicator()
+    {
+        angleDisplayObject.transform.position = transform.position + new Vector3(1f, +3.5f, 0f);
+        angleDisplayObject.SetActive(true);
+    }
+
+    private Vector3 getNewposition()
+    {
+        if (currentElevation < Elevations)
+        {
+            lastposition = new Vector3(lastposition.x - 0.5f, lastposition.y + 6.5f, lastposition.z);
+            currentElevation++;
+        }
+        else
+        {
+            string SceneName = SceneManager.GetActiveScene().name;
+            CurrentSceneLevel = int.Parse(SceneName.Replace("Level", ""));
+            if (CurrentSceneLevel == 5)
+            {
+                JumpMsg.text = "You have completed all the levels!";
+            }
+            else if (CurrentSceneLevel * 5 < PlayerPrefs.GetInt("scorePref"))
+            {
+                //print(CurrentSceneLevel * 5);
+                AllowNewLevel = true;
+                timer = 5f;
+                JumpMsg.text = "New Level Unlocked";
+            }
+        }
+        CameraDistance += 5f;
+        return lastposition;
+    }
+
+    private void CheckValidLanding(float angle)
+    {
+        // print(angle);
+        //if ((140 < angle && angle < 220) || (320 < angle || angle < 40))
+        //{
+        //    validLanding = true;
+        //}
+        if (angle < 45 || 135 < angle)
+        {
+            validLanding = true;
+        }
+        else
+        {
+            validLanding = false;
+        }
+    }
+
+    private void tuck()
+    {
+        count++;
+        rb.AddTorque(new Vector3(0, 0, 10) * -100, ForceMode.Force);
+        //rb.centerOfMass = new Vector3(rb.centerOfMass.x, rb.centerOfMass.y + 0.25f);
+        ani.SetBool("Crouch", true);
+        hasTuck = true;
+    }
+
+    private void jump()
+    {
+        count++;
+        rb.isKinematic = false;
+        rb.useGravity = true;
+        Vector3 dir = Quaternion.AngleAxis(diveAngle, Vector3.forward) * Vector3.right;
+        rb.AddForce(dir * JumpForce, ForceMode.Force);
+        //rb.velocity = new Vector3(5f, 5f, 0);
+        rb.AddTorque(new Vector3(0, 0, 1) * -100);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Coin"))
+        {
+            other.gameObject.SetActive(false);
+            score = score + 1;
+            SetCountText();
+        }
+
+        if (other.gameObject.CompareTag("Elixir"))
+        {
+            other.gameObject.SetActive(false);
+            life = life + 1;
+            SetLifeText();
+        }
+    }
+
+    void SetCountText()
+    {
+        countText.text = "Score: " + score.ToString();
+        PlayerPrefs.SetInt("scorePref", score);
+
+    }
+
+    void SetLifeText()
+    {
+        lifeText.text = "Life: " + life.ToString();
+        PlayerPrefs.SetInt("lifePref", life);
+
+    }
+    // Position to jump
+    public Vector3 getHumanPosition()
+    {
+        return Vector3.zero;
+        //return rb.position;
+    }
+}
